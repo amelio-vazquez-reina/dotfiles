@@ -1,0 +1,251 @@
+#!/usr/bin/env zsh
+# 
+# .zshrc is sourced in interactive shells.
+# It should contain commands to set up aliases,
+# functions, options, key bindings, etc.
+#
+
+# Aliases: 
+flg_is_login=$(setopt | grep login);
+
+
+# AUTOJUMP
+[[ -s `brew --prefix`/etc/autojump.zsh ]] && . `brew --prefix`/etc/autojump.zsh
+# [[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && . ~/.autojump/etc/profile.d/autojump.sh
+export AUTOJUMP_KEEP_SYMLINKS=1
+export AUTOJUMP_IGNORE_CASE=1
+# Autojump needs to be loaded before 
+
+# ****************************************************************
+
+setopt AUTO_CD
+
+autoload -Uz compinit
+compinit
+
+## Autocompletion cues:
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+# eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+
+# ****************************************************************
+
+# ****************************************************************
+# Allow emacs to track my current directory so that I can later do C-x C-f
+# See http://stackoverflow.com/questions/367442/getting-emacs-ansi-term-and-zsh-to-play-nicely
+if [ -n "$INSIDE_EMACS" ]; then
+  chpwd() { print -P "\033AnSiTc %d" }
+  print -P "\033AnSiTu %n"
+  print -P "\033AnSiTc %d"
+fi
+# ****************************************************************
+
+# Working with solarized in Ubuntu: http://michaelheap.com/getting-solarized-working-on-ubuntu/
+# if [ -x /usr/bin/dircolors ]; then
+#    test -r ~/.dircolors_zsh && eval "$(dircolors -b ~/.dircolors_zsh)" || eval "$(dircolors -b)"
+# fi
+
+# enable color support of ls and also add handy aliases
+if [ -f ~/set_color_scheme.sh ]; then
+	# echo "Setting up colors"
+	source ~/set_color_scheme.sh
+	alias ls='ls --color=yes'
+	alias l='ls --color=yes -aAhlF --sort=extension'
+        # alias l='lea | grep "^d" && lea | grep "^-" && lea | grep "^l" && lea'
+	alias grepc='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
+fi
+
+
+
+# ****************************************************************
+# Be wary of this. We have a LESS definition also in .my_less_options
+# This already works with color (if we pass anything with git, we should use --color)
+# export PAGER=less
+alias grep='grep --color=auto'
+alias less='less -i -M -R -X'
+# -X or --no-init
+# Disables sending the termcap initialization and deinitialization strings to the terminal.  This is sometimes desirable if the deinitialization string does something unnecessary, like clearing the screen.
+# -i or --ignore-case
+# Causes  searches to ignore case; that is, uppercase and lowercase are considered identical.  This option is ignored if any uppercase letters appear in the search pattern; in other words, if a pattern contains uppercase letters,
+# then that search does not ignore case.
+# # -M 
+# Causes less to prompt even more verbosely than more.
+# -R or --RAW-CONTROL-CHARS
+# Like -r, but only ANSI "color" escape sequences are output in "raw" form.  Unlike -r, the screen appearance is maintained correctly in most cases.  ANSI "color" escape sequences are sequences of the form:
+
+# ESC [ ... m
+
+#     where  the  "..."  is  zero  or more color specification characters For the purpose of keeping track of screen appearance, ANSI color escape sequences are assumed to not move the cursor.  You can make less think that characters
+#     other than "m" can end ANSI color escape sequences by setting the environment variable LESSANSIENDCHARS to the list of characters which can end a color escape sequence.  And you can make less think that  characters  other  than
+#     the standard ones may appear between the ESC and the m by setting the environment variable LESSANSIMIDCHARS to the list of characters which can appear.
+################################################################################################################################################################################################################################################################
+
+# export LESS='-i -M -R'
+# lesskey ~/.my_less_options
+# ****************************************************************
+# This seems to fix the problem with Alt-f and Alt-b
+# However, 
+
+# within ansi-term or multi-term, this returns eterm-color
+# TERM='xterm-256color'
+
+# Running .less options (I think this is for scrolling and keyboard shortcuts)
+# Enabling color in man pages with less (map scape characters to color)
+
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+
+
+################################################################
+# Keyboard bindings: (amelio from StackExchnge).
+# http://unix.stackexchange.com/questions/16101/zsh-search-history-on-up-and-down-keys/16114#16114
+################################################################
+
+# DEFINE OUR OWN SHORTCUTS!:
+#
+up-line-or-history-beginning-search () {
+  if [[ -n $PREBUFFER ]]; then
+    zle up-line-or-history
+  else
+    zle history-beginning-search-backward
+  fi
+}
+down-line-or-history-beginning-search () {
+  if [[ -n $PREBUFFER ]]; then
+    zle down-line-or-history
+  else
+    zle history-beginning-search-forward
+  fi
+}
+
+
+# zle -N up-line-or-history-beginning-search
+# zle -N down-line-or-history-beginning-search
+
+# bindkey '^P' up-line-or-history-beginning-search
+# bindkey '^N' down-line-or-history-beginning-search
+
+
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
+
+# bindkey '^P' history-search-backward
+# bindkey '^N' history-search-forward
+################################################################
+
+# From Guilles (More precommand modifiers)
+
+# alias dirs='dirs -v'
+
+
+################################################################
+# UMASK:
+# This line is the same as umask 007
+umask u=rwx,g=rx,o=rx
+
+# Do not share with anybody
+# umask 077
+################################################################
+
+# export SHELL='/bin/zsh'
+export SHELL='/bin/zsh'
+# alias res="exec env -i HOME=$HOME TERM=$TERM DISPLAY=$DISPLAY PROMPT='>' /bin/tcsh"
+alias res="exec /bin/tcsh"
+
+# alias gitver='echo "`git symbolic-ref HEAD 2> /dev/null | cut -b 12-`-`git log --pretty=format:\"%h\" -1`"'
+
+
+# Added when trying to install with:
+# cpan Term::ExtendedColor
+
+
+
+################################################################
+# Remember that:
+# 1) bue_cshrc resets things
+# 2) When running zsh directly from emacs we don't have the variables from
+#    cshrc_local! (even though we seem to have some variables from bue_cshrc)
+################################################################
+
+
+
+################################################################
+# PYTHON:
+################################################################
+# I think there are three relevant locations:
+# 1) /home/avazquez/.local/python2.7/site-packages (this one is added to PYTHON_PATH automatically)
+# 2) /home/.my_python_pacakges/  (this one we need to add manually, as below, we need it for jedi)
+# 3) /d4m/vid/bin/Python/ (this one is added on the source code. used in the cluster)
+
+
+
+# We probably don't want to include other special paths
+# since we will include them in the source files themshelves
+
+
+
+### HEADERS FOR COMPILATION:
+# export C_INCLUDE_PATH=/d4m/vid/bin/utils/readline-6.2/:$C_INCLUDE_PATH
+# export CPLUS_INCLUDE_PATH=/d4m/vid/bin/utils/readline-6.2/:$CPLUS_INCLUDE_PATH
+# export CPATH=/d4m/vid/bin/utils/readline-6.2/:$CPATH
+# export OBJC_INCLUDE_PATH=/d4m/vid/bin/utils/readline-6.2/:$OBJC_INCLUDE_PATH
+
+# http://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html
+# CPATH
+# C_INCLUDE_PATH
+# CPLUS_INCLUDE_PATH
+# OBJC_INCLUDE_PATH
+
+
+
+# Activated in csh. but does not carry over to Zsh:
+# source /home/avazquez/raid/prj/general/code/virtualenvs/work/bin/activate
+# source /home/avazquez/raid/prj/dcaps/share/python_setup/source_me_to_activate_python.sh 
+
+
+# We don't have dircolors
+# LS_COLORS=…
+# zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+# if whence dircolors >/dev/null; then
+#   export LS_COLORS
+#   alias ls='ls --color'
+# else
+#   export CLICOLOR=1
+#   LSCOLORS=…
+# fi
+
+if whence dircolors >/dev/null; then
+  eval "$(dircolors -b)"
+  zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+  alias ls='ls --color'
+else
+  export CLICOLOR=1
+  zstyle ':completion:*:default' list-colors ''
+fi
+
+# Make zsh know about hosts already accessed by SSH
+zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+

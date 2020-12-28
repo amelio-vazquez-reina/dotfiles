@@ -1,0 +1,78 @@
+#!/usr/bin/env zsh
+# Coming from common-aliases.plugin.zsh
+# ls, the common ones I use a lot shortened for rapid fire usage
+alias l='ls -lAFh'     #size,show type,human readable
+alias la='ls -lAFh'   #long list,show almost all,show type,human readable
+alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
+alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+alias ll='ls -l'      #long list
+alias ldot='ls -ld .*'
+alias lS='ls -1FSsh'
+alias lart='ls -1Fcart'
+alias lrt='ls -1Fcrt'
+alias ackl='ack --pager="less -R" --before-context=2 --after-context=2'
+
+# some more ls aliases
+# alias ls='ls --color=yes -ahlF --sort=extension'
+
+
+alias ....='cd ../../../'
+alias .....='cd ../../../../'
+alias ......='cd ../../../../../'
+alias .......='cd ../../../../../../'
+alias c='cd'
+
+autoload zmv
+alias zmz='noglob zmv'
+alias zcp='noglob zmv -C'
+alias zln='noglob zmv -L'
+alias zsy='noglob zmv -Ls'
+
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
+alias dud='du --max-depth=1 -h'
+alias duf='du -sh *'
+
+# Make zsh know about hosts already accessed by SSH
+zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+
+# export EMACS_INSTALLATION="/Applications/"
+# alias emacsclient=$EMACS_INSTALLATION"/Emacs.app/Contents/MacOS/bin/emacsclient"
+# alias emacs=$EMACS_INSTALLATION"/Emacs.app/Contents/MacOS/Emacs"
+
+alias fh='fc -W && fc -R'
+
+export HADOOP_HOME='/usr/lib/hadoop'
+export HADOOP_PREFIX='/usr/lib/hadoop'
+
+################################################################
+# SESSIONM
+export PATH_TO_ADM_DEV="/Users/avazquezreina/code/adm-dev"
+alias goml="ssh -t ml_cluster 'export LC_STARTUP_CODE=goh; exec zsh'"
+alias cdev="cd $PATH_TO_ADM_DEV/adm-dev"
+################################################################
+
+
+
+alias gip='ipython --profile=default'
+alias gopy3='source activate py37'
+alias gopy2='source activate py27'
+alias date='gdate'
+alias ecs='/usr/bin/emacs'
+
+alias ggrepc="ggrep --color=always"
+alias ack="ack --color"
+
+# http://emacs.stackexchange.com/questions/12522/utf-8-native-locale-for-ansi-term/12531#12531
+if [[ -z $LANG ]]; then export LANG=en_US.utf8; fi
+
+################
+alias pgh='git config --global user.email "amelio.vazquez.reina@gmail.com"; echo "On GitHub as amelio.vazquez.reina@gmail.com"'
+alias dxgh='git config --global user.email "avazquez@dataxu.com"; echo "On GitHub as avazquez@dataxu.com"'
+################
+
+
+################################################################
+# GPG_TTY
+export GPG_TTY=$(tty)
+################################################################
