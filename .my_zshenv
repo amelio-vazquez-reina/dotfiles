@@ -1,0 +1,98 @@
+#!/usr/bin/env zsh
+# Prevent parsing /etc/* files (/etc/shenv will always be executed though)
+# http://unix.stackexchange.com/questions/72559/how-to-avoid-parsing-etc-files#72561
+# unsetopt GLOBAL_RCS
+echo "Path before entering .zshenv: $PATH"
+################################################################
+# Important - it looks like OS X does *NOT* add /usr/sbin to the PATH.
+# It instead starts with this PATH: /usr/bin:/bin (at "first line" in .zshenv so to speak)
+# As a result, scutil does not work unless we explicitly add it here:
+export PATH=$PATH:/usr/sbin/
+################################################################
+
+echo "------"
+MACHINE_NAME=$(scutil --get LocalHostName)
+MACHINE_NAME=$(echo $MACHINE_NAME | tr -d ' ')
+if [ "$MACHINE_NAME"  = 'Amelio-MBP19' ]; then
+    CONDA_ROOT="$HOME/anaconda3"       
+    CONDA="$HOME/anaconda3/bin"       
+  else
+    CONDA="/anaconda3/bin"
+fi
+
+# We'll have this file in DropBox to keep it in sync.
+# This is something one typically sets in .zshrc (interactive shells)
+echo "Machine name is "$MACHINE_NAME
+
+REPS=$HOME"/code"
+export PATH_TO_SM_REPOSITORIES=$REPS'/SM'
+export PATH_TO_ADT_SANDBOX_REPOSITORY=$PATH_TO_SM_REPOSITORIES'/ADT-sandbox'
+
+export PATH_TO_DROPBOX="$HOME/Dropbox"
+export PATH_TO_SCREENSHOTS="$PATH_TO_DROPBOX/meli/screenshots"
+export PATH_TO_DATA="$HOME/data"
+export PATH_TO_DATA_TEMP=$PATH_TO_DATA
+export PATH_TO_DATA=$PATH_TO_DATA
+export PATH_TO_HIVE_SCRIPTS=$PATH_TO_OPTIMIZATION_SANDBOX_REPOSITORY/utils/bin/hive_queries/
+
+# export JAVA_HOME=$(/usr/libexec/java_home)
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home
+
+##
+
+alias cdata="cd $PATH_TO_DATA"
+alias cout="cd $PATH_TO_DATA/output/"
+alias csmreps="cd $PATH_TO_SM_REPOSITORIES"
+
+
+## This is to help us use the GNU variants of the 
+# MANPATH="/usr/local/opt/gnu-tar/libexec/gnuman:$MANPATH"
+# MANPATH="/usr/local/opt/findutils/libexec/gnuman:$MANPATH"
+# MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+# MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
+##
+# PYTHONPATH:
+
+LOCAL_CLONES=/Users/amelio/local_clones/
+PYTHONPATH=
+# PYTHONPATH+=$LOCAL_CLONES'/best/:'
+PYTHONPATH+='.'
+export PYTHONPATH
+
+################################################################
+# EMACS_PATH="/usr/local/bin"
+# export GIT_EDITOR="$EMACS_PATH/emacsclient"
+# export EDITOR="$EMACS_PATH/emacsclient"
+# export VISUAL="$EMACS_PATH/emacsclient"
+################################################################
+
+# The following line allows us to start Emacs with emacslient
+# (the official doc does not mention anything about this)
+export ALTERNATE_EDITOR=""
+
+# MATPLOTLIBRC (new correct place for it)
+export MATPLOTLIBRC=$HOME/.config/matplotlib/matplotlibrc
+typeset -U path
+################################################################
+
+# NVM:
+#export NVM_DIR="$HOME/.nvm"
+#. "/usr/local/opt/nvm/nvm.sh"
+################################################################
+
+# Python settings
+export PYTHONIOENCODING=UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# In OS X
+# http://unix.stackexchange.com/questions/185544/no-colored-output-in-less-for-the-ls-command
+export CLICOLOR_FORCE=1
+
+fpath=($HOME./zsh-functions $fpath)
+source ~/.zshrc.paths
+source ~/.zshrc.functions
+source ~/.zshrc.aliases
+source ~/.zshrc.personal
